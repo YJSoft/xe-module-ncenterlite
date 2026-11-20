@@ -139,7 +139,7 @@ class ncenterliteModel extends ncenterlite
 
 		foreach($list as $k => $v)
 		{
-			$v->text = $this->getNotificationText($v);
+			$v = $this->getDisplayNotification($v);
 			$v->ago = $this->getAgo($v->regdate);
 			$v->url = getUrl('','act','procNcenterliteRedirect', 'notify', $v->notify);
 			if($v->target_member_srl)
@@ -298,6 +298,21 @@ class ncenterliteModel extends ncenterlite
 		$this->add('colorset_list', $colorsets);
 	}
 	
+	/** Prepare both the formatted message and the sender fields used directly by skins. */
+	public function getDisplayNotification($notification)
+	{
+		$display = clone $notification;
+		foreach(array('target_nick_name', 'target_user_id', 'target_email_address') as $field)
+		{
+			if(isset($display->$field))
+			{
+				$display->$field = htmlspecialchars($display->$field, ENT_QUOTES, 'UTF-8', false);
+			}
+		}
+		$display->text = $this->formatNotificationText($display);
+		return $display;
+	}
+
 	/**
 	 * Return the notification text.
 	 * 
@@ -305,6 +320,11 @@ class ncenterliteModel extends ncenterlite
 	 * @return string
 	 */
 	public function getNotificationText($notification)
+	{
+		return $this->getDisplayNotification($notification)->text;
+	}
+
+	protected function formatNotificationText($notification)
 	{
 		global $lang;
 		

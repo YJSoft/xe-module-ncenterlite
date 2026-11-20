@@ -16,7 +16,7 @@ class ncenterliteAdminModel extends ncenterlite
 
 		foreach($list as $k => $v)
 		{
-			$v->text = $oNcenterliteModel->getNotificationText($v);
+			$v = $oNcenterliteModel->getDisplayNotification($v);
 			$v->ago = $oNcenterliteModel->getAgo($v->regdate);
 			$v->url = getUrl('','act','procNcenterliteRedirect', 'notify', $v->notify, 'url', $v->target_url);
 			if($v->target_member_srl)
